@@ -3,18 +3,26 @@
 import { supabase } from "@/lib/supabase/client";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
+import TipTapImage from "@tiptap/extension-image";
 import { useEffect, useState } from "react";
+import Image from "next/image";
+import { TableKit } from "@tiptap/extension-table";
 
 export default function Editor() {
   const [message, setMessage] = useState("");
   const [slug, setSlug] = useState("about");
   const [pages, setPages] = useState<
   { slug: string; title: string }[]
->([]);
+  >([]);
+  const [showImagePicker, setShowImagePicker] = useState(false);
+  const [images, setImages] = useState<
+  { name: string; url: string }[]
+  >([]);
+
+
 
   const editor = useEditor({
-    extensions: [StarterKit, Image],
+    extensions: [StarterKit, TipTapImage, TableKit],
     content: "<p>Start editing your page...</p>",
   });
 
@@ -55,6 +63,40 @@ export default function Editor() {
   };
 
   loadPages();
+}, []);
+
+  useEffect(() => {
+  const loadImages = async () => {
+    const { data, error } = await supabase.storage
+      .from("images")
+      .list();
+    console.log("Images data:", data);
+    console.log("Images error:", error);
+
+    if (error) {
+      console.error("Error loading images:", error);
+      return;
+    }
+
+    const imageList = data
+      .filter((file) => file.name !== ".emptyFolderPlaceholder")
+      .map((file) => {
+        const { data: publicUrlData } = supabase.storage
+          .from("images")
+          .getPublicUrl(file.name);
+
+        return {
+          name: file.name,
+          url: publicUrlData.publicUrl,
+        };
+      });
+
+    console.log("Image list:", imageList);
+
+    setImages(imageList);
+  };
+
+  loadImages();
 }, []);
 
   if (!editor) {
@@ -238,7 +280,74 @@ export default function Editor() {
           >
             Insert Image
         </button>
+
+        <button
+        onClick={() =>
+          editor
+          ?.chain()
+          .focus()
+          .insertTable({
+            rows: 3,
+            cols: 3,
+            withHeaderRow: true,
+          })
+          .run()
+        }
+        disabled={!editor}
+        >
+          Insert Table
+        </button>
+
+        <button
+        onClick={() => setShowImagePicker(!showImagePicker)}
+        className="rounded border px-3 py-1"
+        >
+          Select Image
+        </button>
       </div>
+
+      {showImagePicker && (
+        <div className="border-b p-4">
+          <h3 className="mb-3 font-semibold">Select an Image</h3>
+          
+          {images.length === 0 ? (
+            <p>No images found.</p>
+          ) : (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+            {images.map((image) => (
+              <button
+              key={image.name}
+              onClick={() => {
+                editor
+                .chain()
+                .focus()
+                .setImage({
+                  src: image.url,
+                })
+                .run();
+                
+                setShowImagePicker(false);
+                setMessage("Image inserted successfully!");
+              }}
+              className="overflow-hidden rounded border hover:ring-2"
+              >
+                <Image
+                src={image.url}
+                alt={image.name}
+                width={300}
+                height={200}
+                className="h-32 w-full object-cover"
+                />
+                
+                <div className="truncate p-2 text-sm">
+                  {image.name}
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    )}
 
       <div className="p-4">
         <EditorContent editor={editor} />
