@@ -7,6 +7,7 @@ import TipTapImage from "@tiptap/extension-image";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { TableKit } from "@tiptap/extension-table";
+import Link from "@tiptap/extension-link";
 
 export default function Editor() {
   const [message, setMessage] = useState("");
@@ -22,8 +23,19 @@ export default function Editor() {
 
 
   const editor = useEditor({
-    extensions: [StarterKit, TipTapImage, TableKit],
+    extensions: [StarterKit.configure({
+      link: false,
+    }),
+    TipTapImage, TableKit, Link.configure({
+      openOnClick: false,
+      HTMLAttributes: {
+        target: "_blank",
+        rel: "noopener noreferrer",
+      }
+    })
+  ],
     content: "<p>Start editing your page...</p>",
+    immediatelyRender: false,
   });
 
   useEffect(() => {
@@ -100,7 +112,7 @@ export default function Editor() {
 }, []);
 
   if (!editor) {
-    return null;
+    return <p>Loading editor...</p>;
   }
 
   const handleSave = async () => {
@@ -277,6 +289,7 @@ export default function Editor() {
 
           input.click();
           }}
+          className="rounded border px-3 py-1"
           >
             Insert Image
         </button>
@@ -294,8 +307,145 @@ export default function Editor() {
           .run()
         }
         disabled={!editor}
+        className="rounded border px-3 py-1"
         >
           Insert Table
+        </button>
+
+        
+        <button
+          type="button"
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => {
+            if (!editor) return;
+        
+            const success = editor
+              .chain()
+              .focus()
+              .addRowBefore()
+              .run();
+        
+            console.log("Add row before succeeded:", success);
+          }}
+          className="rounded border px-3 py-1"
+        >
+          Add Row Before
+        </button>
+
+        
+        
+        <button
+          type="button"
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => {
+            if (!editor) return;
+        
+            const success = editor
+              .chain()
+              .focus()
+              .addRowAfter()
+              .run();
+        
+            console.log("Add row after succeeded:", success);
+          }}
+          className="rounded border px-3 py-1"
+        >
+          Add Row After
+        </button>
+
+        <button
+          type="button"
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => {
+            if (!editor) return;
+        
+            const success = editor
+              .chain()
+              .focus()
+              .deleteRow()
+              .run();
+        
+            console.log("Delete row succeeded:", success);
+          }}
+          className="rounded border px-3 py-1"
+        >
+          Delete Row
+        </button>
+
+        <button
+          type="button"
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => {
+            if (!editor) return;
+        
+            const success = editor
+              .chain()
+              .focus()
+              .addColumnBefore()
+              .run();
+        
+            console.log("Add column before succeeded:", success);
+          }}
+          className="rounded border px-3 py-1"
+        >
+          Add Column Before
+        </button>
+
+        <button
+          type="button"
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => {
+            if (!editor) return;
+        
+            const success = editor
+              .chain()
+              .focus()
+              .addColumnAfter()
+              .run();
+        
+            console.log("Add column after succeeded:", success);
+          }}
+          className="rounded border px-3 py-1"
+        >
+          Add Column After
+        </button>
+
+        <button
+          type="button"
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => {
+            if (!editor) return;
+        
+            const success = editor
+              .chain()
+              .focus()
+              .deleteColumn()
+              .run();
+        
+            console.log("Delete column succeeded:", success);
+          }}
+          className="rounded border px-3 py-1"
+        >
+          Delete Column
+        </button>
+
+        <button
+          type="button"
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => {
+            if (!editor) return;
+        
+            const success = editor
+              .chain()
+              .focus()
+              .deleteTable()
+              .run();
+        
+            console.log("Delete table succeeded:", success);
+          }}
+          className="rounded border px-3 py-1"
+        >
+          Delete Table
         </button>
 
         <button

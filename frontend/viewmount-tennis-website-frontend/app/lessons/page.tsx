@@ -2,6 +2,7 @@ import { generateHTML } from "@tiptap/html";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import { supabase } from "@/lib/supabase/client";
+import { TableKit } from "@tiptap/extension-table";
 
 export default async function Lessons() {
   const { data, error } = await supabase
@@ -14,17 +15,17 @@ export default async function Lessons() {
     console.error("Error loading Lessons page:", error);
 
     return (
-      <main className="text-center">
+      <main className="page-content">
         <h1>Lessons at Viewmount Tennis</h1>
         <p>Unable to load page content.</p>
       </main>
     );
   }
 
-  const html = generateHTML(data.content, [StarterKit, Image]);
+  const html = generateHTML(data.content, [StarterKit, Image, TableKit]);
 
   return (
-    <main className="text-center">
+    <main className="page-content">
       <div dangerouslySetInnerHTML={{ __html: html }} />
     </main>
   );
