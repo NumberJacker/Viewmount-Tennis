@@ -132,3 +132,21 @@ main a[href] {
   color: #2563eb;
   text-decoration: underline;
 }
+
+/* Restrict images on published pages */
+main img {
+  width: auto;
+  max-width: min(100%, 400px);
+  height: auto;
+  max-height: none;
+  object-fit: contain;
+}
+
+/* Restrict images inside the admin editor */
+.ProseMirror img {
+  width: auto;
+  max-width: min(100%, 400px);
+  height: auto;
+  max-height: none;
+  object-fit: contain;
+}

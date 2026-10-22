@@ -1,10 +1,11 @@
 import { generateHTML } from "@tiptap/html";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 import { TableKit } from "@tiptap/extension-table";
 
 export default async function About() {
+  const supabase = createClient();
   const { data, error } = await supabase
     .from("pages")
     .select("content")

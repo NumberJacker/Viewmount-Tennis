@@ -1,6 +1,6 @@
 "use client";
 
-import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TipTapImage from "@tiptap/extension-image";
@@ -10,6 +10,7 @@ import { TableKit } from "@tiptap/extension-table";
 import Link from "@tiptap/extension-link";
 
 export default function Editor() {
+  const supabase = createClient();
   const [message, setMessage] = useState("");
   const [slug, setSlug] = useState("about");
   const [pages, setPages] = useState<
