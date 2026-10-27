@@ -150,3 +150,13 @@ main img {
   max-height: none;
   object-fit: contain;
 }
+
+.ProseMirror p {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.page-content p {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}

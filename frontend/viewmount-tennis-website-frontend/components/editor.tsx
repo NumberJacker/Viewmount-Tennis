@@ -4,13 +4,13 @@ import { createClient } from "@/lib/supabase/client";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TipTapImage from "@tiptap/extension-image";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { TableKit } from "@tiptap/extension-table";
 import Link from "@tiptap/extension-link";
 
 export default function Editor() {
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
   const [message, setMessage] = useState("");
   const [slug, setSlug] = useState("about");
   const [pages, setPages] = useState<
@@ -58,7 +58,7 @@ export default function Editor() {
     };
 
     loadPage();
-  }, [editor, slug]);
+  }, [editor, slug, supabase]);
 
   useEffect(() => {
   const loadPages = async () => {
@@ -76,7 +76,7 @@ export default function Editor() {
   };
 
   loadPages();
-}, []);
+}, [supabase]);
 
   useEffect(() => {
   const loadImages = async () => {
@@ -110,7 +110,7 @@ export default function Editor() {
   };
 
   loadImages();
-}, []);
+}, [supabase]);
 
   if (!editor) {
     return <p>Loading editor...</p>;
